@@ -1,0 +1,18 @@
+extends ../includes/layout
+block main-content
+    toaster-container(toaster-options="{'time-out': 5000, 'close-button':true, 'animation-class': 'toast-top-right'}")
+    .navbar.navbar-inverse.navbar-fixed-top
+        .container
+            .navbar-header
+                a.navbar-brand(href="/") Lindoria
+                    h6 -Lindoria Birthright Tracker
+            .navbar-collapse.collapse
+                ul.nav.navbar-nav
+                    li
+                        a(href="/") Home
+                div(ng-include="'/partials/account/navbar-login'")
+    section.content
+        #content(ui-view='')
+
+    footer.container.text-center
+        p &copy; 2014 Lindoria Fun International Ltd.
