@@ -30,9 +30,9 @@
 
     app.use(express.static(config.rootPath + '/public'));
 
-    app.get('/partials/*', function (req, res) {
-      res.render('../../public/src/js/' + req.params[0]);
-    });
+    //app.get('/partials/*', function (req, res) {
+    //  res.render('../../public/src/js/' + req.params[0]);
+    //});
 
     app.use('/api', expressJwt({
         secret      : config.tokenSecret,
