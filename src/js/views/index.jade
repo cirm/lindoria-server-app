@@ -10,9 +10,10 @@ block main-content
                 ul.nav.navbar-nav
                     li
                         a(href="/") Home
-                div(ng-include="'/account/navbar-login.html'")
+                div(ng-include="'layout/topnav.html'")
     section.content
-        #content(ui-view='')
+        div(ng-view)
+
 
     footer.container.text-center
         p &copy; 2014 Lindoria Fun International Ltd.

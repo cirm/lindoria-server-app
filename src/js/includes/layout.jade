@@ -2,17 +2,16 @@ docktype
 html
     head
         title Lindoria
-        //link(href="/dist/src/assets/favicon.ico", rel="shortcut icon", type="image/x-icon")
-        link(data-require='bootstrap-css@*', data-semver='3.3.1', rel='stylesheet', href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css')
-        link(data-require='bootstrap-glyphicons@*', data-semver='3.2.1', rel='stylesheet', href='http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/img/glyphicons-halflings.png')
-        link(href='https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/0.4.9/toaster.min.css', rel='stylesheet')
-        //link(rel="font", href="/dist/src/assets/ui-grid.eot")
-        //link(rel="font", href="/dist/src/assets/ui-grid.svg")
-        //link(rel="font", href="/dist/src/assets/ui-grid.ttf")
-        //link(rel="font", href="/dist/src/assets/ui-grid.woff")
-        //link(rel="stylesheet", href="/dist/vendor/angular-ui-grid/ui-grid.min.css")
+        //link(href="/src/assets/favicon.ico", rel="shortcut icon", type="image/x-icon")
+        link(rel="font", href="/vendor/bootstrap/fonts/glyphicons-halflings-regular.eot")
+        link(rel="font", href="/vendor/bootstrap/fonts/glyphicons-halflings-regular.svg")
+        link(rel="font", href="/vendor/bootstrap/fonts/glyphicons-halflings-regular.ttf")
+        link(rel="font", href="/vendor/bootstrap/fonts/glyphicons-halflings-regular.woff")
+        link(rel="font", href="/vendor/bootstrap/fonts/glyphicons-halflings-regular.woff2")
+        link(rel="stylesheet", href="/vendor/angular-ui-grid/ui-grid.min.css")
+        link(rel="stylesheet", href="/vendor/bootstrap/dist/css/bootstrap.min.css")
+        link(rel="stylesheet", href="/vendor/angularjs-toaster/toaster.min.css")
         link(rel="stylesheet", href="/css/site.min.css")
-
-    body(ng-app='app')
+    body(ng-app='app', ng-strict-di='')
         block main-content
         include scripts
