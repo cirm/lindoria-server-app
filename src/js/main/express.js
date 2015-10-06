@@ -9,7 +9,7 @@
 
   module.exports = function (app, config, logger) {
 
-    app.set('views', config.rootPath + '/app/views');
+    app.set('views', config.rootPath + 'views');
     app.set('view engine', 'jade');
 
     logger.debug('Overriding "Express" logger with "winston".');

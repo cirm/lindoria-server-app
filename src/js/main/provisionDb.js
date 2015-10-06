@@ -36,7 +36,7 @@
       .then(function handleSaltPromise(salt) {
         encrypt.hashPwd(uo.password, salt)
           .then(function handleHashPromise(hashed_pwd) {
-            var qs = 'SELECT create_user($1, $2, $3, $4, $5);';
+            var qs = 'SELECT web.create_user($1, $2, $3, $4, $5);';
             var qData = [uo.displayName, uo.username, salt, hashed_pwd, uo.roles];
             dbQuery.insert(qs, qData)
               .then(function dbResult(data) {
@@ -50,7 +50,8 @@
 
   var checkUsers = function () {
     var deferred = q.defer();
-    var qs = 'SELECT * FROM web_users;';
+    var qs = 'SELECT * ' +
+             'FROM web.users;';
     dbQuery.query(qs)
       .then(function dbResult(data) {
         deferred.resolve(data);
