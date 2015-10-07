@@ -19,7 +19,7 @@
       tokenSecret : fs.readFileSync(rootPath + 'ssl/pub_lind_token.pem'),
       tokenOptions: {
         algorithm       : 'HS256',
-        expiresInMinutes: 60
+        expiresIn: 3600
       }
     },
     staging    : {
@@ -32,7 +32,7 @@
       tokenSecret : fs.readFileSync(rootPath + 'ssl/pub_lind_token.pem'),
       tokenOptions: {
         algorithm       : 'HS256',
-        expiresInMinutes: 60
+        expiresIn: 3600
       }
     }
 
