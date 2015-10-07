@@ -4,7 +4,6 @@
   "description": "BR tracker for Lindoria",
   "main": "app.js",
   "scripts": {
-    "prestart": "npm install -g nodemon",
     "start": "nodemon app.js",
     "test": "npm test"
   },
@@ -31,7 +30,6 @@
     "pg": "^4.3.0",
     "pg-transact": "^1.0.1",
     "q": "^2.0.3",
-    "stylus": "^0.50.0",
     "winston": "^1.0.0"
   }
 }
