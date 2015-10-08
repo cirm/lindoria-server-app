@@ -49,7 +49,7 @@
       // After all data is returned, close connection and return results
       query.on('end', function () {
         client.end();
-        deferred.resolve(results)
+        deferred.resolve(results);
       });
 
     });
