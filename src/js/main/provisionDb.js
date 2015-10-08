@@ -32,6 +32,7 @@
 
   var insertUser = function (userObject) {
     var uo = userObject;
+    console.log('landed here');
     encrypt.createSalt()
       .then(function handleSaltPromise(salt) {
         encrypt.hashPwd(uo.password, salt)

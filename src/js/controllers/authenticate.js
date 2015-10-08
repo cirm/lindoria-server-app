@@ -4,6 +4,7 @@
   var jwt    = require('jsonwebtoken')
     , users  = require('../controllers/users')
     , config = require('../config/conf')
+    , db     = require('../main/postgresql')
     , log    = require('../utilities/logging');
 
 
@@ -30,6 +31,13 @@
     return users.queryUser(reqUser);
   };
 
+  var logVisit = function (username) {
+    console.log(username);
+    var qs = 'SELECT web.log_visit($1);';
+    var qd = username;
+    db.insert(qs, qd)
+  };
+
   exports.authUser = function (req, res) {
     getUserData(req.body.username)
       .then(function handleUserPromise(user) {
@@ -38,6 +46,7 @@
             if (authResult !== true) {
               res.status(401).send('Invalid password or username');
             } else {
+              logVisit(user.username);
               var token = generateToken(user);
               res.json({token: token});
             }

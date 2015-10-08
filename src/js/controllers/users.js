@@ -10,7 +10,10 @@
 
   var queryUser = function (username) {
     var deferred = new q.defer();
-    var qs = 'SELECT row_to_json(t) FROM (SELECT * FROM web.users WHERE username = $1) t;';
+    var qs = 'SELECT row_to_json(t) ' +
+             'FROM (SELECT * ' +
+                   'FROM web.users ' +
+                   'WHERE username = $1) t;';
     var qData = [username];
     db.insert(qs, qData)
       .then(function queryPromise(result) {
