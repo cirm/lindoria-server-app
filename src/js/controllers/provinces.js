@@ -5,13 +5,15 @@
     , handleErr = require('../utilities/logging');
 
   exports.getProvincesPopulation = function (req, res) {
-    Province.find({}).populate('holding.guild holding.law holding.source holding.temple').exec(function (err, collection) {
+    Province.find({}).populate('holding.guild holding.law holding.source holding.temple')
+      .exec(function (err, collection) {
       res.send(collection);
     });
   };
 
   exports.getProvinces = function (req, res) {
-    Province.find({}).populate('holding.guild holding.law holding.source holding.temple domain').exec(function (err, collection) {
+    Province.find({}).populate('holding.guild holding.law holding.source holding.temple domain')
+      .exec(function (err, collection) {
       res.send(collection);
     });
   };

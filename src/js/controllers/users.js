@@ -10,8 +10,8 @@
 
   var queryUser = function (username) {
     var deferred = new q.defer();
-    var qs       = 'SELECT row_to_json(t) FROM (SELECT * FROM web.users WHERE username = $1) t;';
-    var qData    = [username];
+    var qs = 'SELECT row_to_json(t) FROM (SELECT * FROM web.users WHERE username = $1) t;';
+    var qData = [username];
     db.insert(qs, qData)
       .then(function queryPromise(result) {
         var data = result[0].row_to_json;
@@ -45,7 +45,7 @@
   };
 
   var updateUserQuery = function (userUpdates, user) {
-    var deferred     = new q.defer();
+    var deferred = new q.defer();
     user.usr_display = userUpdates.display;
     user.save()
       .then(function () {
@@ -60,7 +60,8 @@
   module.exports = {
     updateUser: function (req, res) {
       var userUpdates = req.body;
-      if (req.Authorization.username !== userUpdates.username && !req.Authorization.hasRole('admin')) {  //if (true) {then do.}
+      if (req.Authorization.username !== userUpdates.username && !req.Authorization.hasRole('admin')) {
+        //if (true) {then do.}
         return res.status(403).end();
       }
       queryUser(req.Authorization.username)
