@@ -4,7 +4,6 @@
   var jwt    = require('jsonwebtoken')
     , users  = require('../controllers/users')
     , config = require('../config/conf')
-    , db     = require('../main/postgresql')
     , log    = require('../utilities/logging');
 
 
