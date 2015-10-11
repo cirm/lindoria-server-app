@@ -10,11 +10,11 @@
 
   var queryUser = function (username) {
     var deferred = new q.defer();
-    var qs = 'SELECT row_to_json(t) ' +
-             'FROM (SELECT * ' +
-                   'FROM web.users ' +
-                   'WHERE username = $1) t;';
-    var qData = [username];
+    var qs       = 'SELECT row_to_json(t) ' +
+      'FROM (SELECT * ' +
+      'FROM web.users ' +
+      'WHERE username = $1) t;';
+    var qData    = [username];
     db.insert(qs, qData)
       .then(function queryPromise(result) {
         var data = result[0].row_to_json;
@@ -37,6 +37,7 @@
           encrypt.hashPwd(userUpdates.password, salt)
             .then(function hashPromise(hash) {
               user.hashed_pwd = hash;
+              user.updatePassword();
               deferred.resolve(user);
             });
         });
@@ -48,9 +49,9 @@
   };
 
   var updateUserQuery = function (userUpdates, user) {
-    var deferred = new q.defer();
+    var deferred     = new q.defer();
     user.usr_display = userUpdates.display;
-    user.save()
+    user.updateDisplay()
       .then(function () {
         var token = auth.getToken(user);
         deferred.resolve(token);

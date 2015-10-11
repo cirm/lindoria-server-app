@@ -23,16 +23,6 @@
     return this.roles.indexOf(role) > -1;
   };
 
-  userModel.prototype.save = function () {
-    var qs    = 'SELECT web.update_user($1, $2);';
-    var qData = [this.username, this.usr_display];
-    db.insert(qs, qData)
-      .catch(function (err) {
-        log.logErr(err);
-      })
-      .done();
-  };
-
   userModel.prototype.logVisit = function () {
     var qs    = 'SELECT web.log_visit($1);';
     var qData = [this.username];
