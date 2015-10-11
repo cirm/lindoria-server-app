@@ -32,9 +32,8 @@
   };
 
   var logVisit = function (username) {
-    console.log(username);
     var qs = 'SELECT web.log_visit($1);';
-    var qd = username;
+    var qd = [username];
     db.insert(qs, qd)
   };
 

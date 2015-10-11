@@ -24,8 +24,8 @@
   };
 
   userModel.prototype.save = function () {
-    var qs    = 'SELECT update_user($1, $2, $3, $4);';
-    var qData = [this.username, this.usr_display, this.salt, this.hashed_pwd];
+    var qs    = 'SELECT web.update_user($1, $2);';
+    var qData = [this.username, this.usr_display];
     db.insert(qs, qData)
       .catch(function (err) {
         log.logErr(err);

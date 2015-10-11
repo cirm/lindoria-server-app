@@ -84,7 +84,7 @@
     },
 
     getUsers : function (req, res) {
-      var qs = 'SELECT username, usr_display from web.users';
+      var qs = 'SELECT username, usr_display, roles, visited_at from web.users';
       db.query(qs)
         .then(function dbResultPromise(collection) {
           res.send(collection);
