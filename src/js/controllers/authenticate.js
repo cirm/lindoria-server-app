@@ -31,12 +31,6 @@
     return users.queryUser(reqUser);
   };
 
-  var logVisit = function (username) {
-    var qs = 'SELECT web.log_visit($1);';
-    var qd = [username];
-    db.insert(qs, qd)
-  };
-
   exports.authUser = function (req, res) {
     getUserData(req.body.username)
       .then(function handleUserPromise(user) {
@@ -45,7 +39,7 @@
             if (authResult !== true) {
               res.status(401).send('Invalid password or username');
             } else {
-              logVisit(user.username);
+              user.logVisit();
               var token = generateToken(user);
               res.json({token: token});
             }
