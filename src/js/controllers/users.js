@@ -37,8 +37,18 @@
           encrypt.hashPwd(userUpdates.password, salt)
             .then(function hashPromise(hash) {
               user.hashed_pwd = hash;
-              user.updatePassword();
-              deferred.resolve(user);
+              user.updatePassword()
+                .then(function dbResult(promise) {
+                  if (promise === true) {
+                    deferred.resolve(user);
+                    console.log('whee');
+                  }
+                  else {
+                    deferred.reject(new Error('Failed password update'), user)
+                    console.log('jura');
+                  }
+                });
+
             });
         });
     }
@@ -49,15 +59,19 @@
   };
 
   var updateUserQuery = function (userUpdates, user) {
-    var deferred     = new q.defer();
-    user.usr_display = userUpdates.display;
-    user.updateDisplay()
-      .then(function () {
-        var token = auth.getToken(user);
-        deferred.resolve(token);
-      }).catch(function (err) {
-        deferred.reject(new Error(err.toString()));
-      }).done();
+    var deferred = new q.defer();
+    if (user.usr_display !== userUpdates.display) {
+      user.usr_display = userUpdates.display;
+      user.updateDisplay()
+        .then(function () {
+          var token = auth.getToken(user);
+          deferred.resolve(token);
+        }).catch(function (err) {
+          deferred.reject(new Error(err.toString()));
+        }).done();
+    } else {
+      deferred.resolve(user)
+    }
     return deferred.promise;
   };
 

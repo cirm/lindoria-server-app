@@ -3,6 +3,7 @@
   'use strict';
 
   var encrypt = require('../utilities/encryption')
+    , q       = require('q')
     , db      = require('../main/postgresql')
     , log     = require('../utilities/logging');
 
@@ -34,23 +35,35 @@
   };
 
   userModel.prototype.updatePassword = function () {
-    var qs    = 'SELECT web.update_password($1, $2, $3);';
-    var qData = [this.username, this.salt, this.hashed_pwd];
+    var deferred = new q.defer();
+    var qs       = 'SELECT web.update_password($1, $2, $3);';
+    var qData    = [this.username, this.salt, this.hashed_pwd];
     db.insert(qs, qData)
+      .then(function queryPromise(data) {
+        deferred.resolve(data[0].update_password)
+      })
       .catch(function (err) {
         log.logErr(err);
+        deferred.reject(new Error(err.toString()));
       })
       .done();
+    return deferred.promise;
   };
 
   userModel.prototype.updateDisplay = function () {
-    var qs    = 'SELECT web.update_user($1, $2);';
-    var qData = [this.username, this.usr_display];
+    var deferred = new q.defer();
+    var qs       = 'SELECT web.update_user($1, $2);';
+    var qData    = [this.username, this.usr_display];
     db.insert(qs, qData)
+      .then(function queryPromise(data) {
+        deferred.resolve(data[0].update_user)
+      })
       .catch(function (err) {
         log.logErr(err);
+        deferred.reject(new Error(err.toString()));
       })
       .done();
+    return deferred.promise;
   };
 
   module.exports = userModel;
