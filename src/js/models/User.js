@@ -4,11 +4,16 @@
 
   var encrypt = require('../utilities/encryption');
   var q       = require('q');
-  var db      = require('../main/postgresql');
   var log     = require('../utilities/logging');
 
 
-  var userModel = function (data) {
+  var userModel = function (data, options) {
+    if (!options.db) {
+      throw new Error('Options.db is required');
+    }
+
+    this.db = options.db;
+
     this.username       = data.username;
     this.displayName    = data.usr_display;
     this.salt           = data.salt;
@@ -27,11 +32,8 @@
   userModel.prototype.logVisit = function () {
     var qs    = 'SELECT web.log_visit($1);';
     var qData = [this.username];
-    db.insert(qs, qData)
-      .catch(function (err) {
-        log.logErr(err);
-      })
-      .done();
+    this.db.query(qs, qData)
+
   };
 
   userModel.prototype.updatePassword = function () {
