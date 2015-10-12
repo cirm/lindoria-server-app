@@ -1,10 +1,10 @@
 (function () {
   'use strict';
-  var mongoose = require('mongoose')
-    , User = require('../models/User')
-    , domainModel = require('../models/Domain')
-    , holdingModel = require('../models/Holding')
-    , provinceModel = require('../models/Province');
+  var mongoose      = require('mongoose');
+  var User          = require('../models/User');
+  var domainModel   = require('../models/Domain');
+  var holdingModel  = require('../models/Holding');
+  var provinceModel = require('../models/Province');
 
   module.exports = function (conf, logger) {
     mongoose.connect(conf.conString);
@@ -20,5 +20,5 @@
     holdingModel.createDefaultHoldings();
 
   };
-  
+
 }());

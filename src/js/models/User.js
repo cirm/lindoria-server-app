@@ -2,22 +2,22 @@
 (function () {
   'use strict';
 
-  var encrypt = require('../utilities/encryption')
-    , q       = require('q')
-    , db      = require('../main/postgresql')
-    , log     = require('../utilities/logging');
+  var encrypt = require('../utilities/encryption');
+  var q       = require('q');
+  var db      = require('../main/postgresql');
+  var log     = require('../utilities/logging');
 
 
   var userModel = function (data) {
-    this.username    = data.username;
-    this.usr_display = data.usr_display;
-    this.salt        = data.salt;
-    this.hashed_pwd  = data.hashed_pwd;
-    this.roles       = data.roles;
+    this.username       = data.username;
+    this.displayName    = data.usr_display;
+    this.salt           = data.salt;
+    this.hashedPassword = data.hashed_pwd;
+    this.roles          = data.roles;
   };
 
   userModel.prototype.authenticate = function (passwordToMatch) {
-    return encrypt.compareHash(passwordToMatch, this.hashed_pwd);
+    return encrypt.compareHash(passwordToMatch, this.hashedPassword);
   };
 
   userModel.prototype.hasRole = function (role) {
@@ -37,10 +37,10 @@
   userModel.prototype.updatePassword = function () {
     var deferred = new q.defer();
     var qs       = 'SELECT web.update_password($1, $2, $3);';
-    var qData    = [this.username, this.salt, this.hashed_pwd];
+    var qData    = [this.username, this.salt, this.hashedPassword];
     db.insert(qs, qData)
       .then(function queryPromise(data) {
-        deferred.resolve(data[0].update_password)
+        deferred.resolve(data[0].update_password);
       })
       .catch(function (err) {
         log.logErr(err);
@@ -53,10 +53,10 @@
   userModel.prototype.updateDisplay = function () {
     var deferred = new q.defer();
     var qs       = 'SELECT web.update_user($1, $2);';
-    var qData    = [this.username, this.usr_display];
+    var qData    = [this.username, this.displayName];
     db.insert(qs, qData)
       .then(function queryPromise(data) {
-        deferred.resolve(data[0].update_user)
+        deferred.resolve(data[0].update_user);
       })
       .catch(function (err) {
         log.logErr(err);

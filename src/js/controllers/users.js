@@ -2,11 +2,11 @@
 (function () {
   'use strict';
 
-  var User    = require('../models/User')
-    , encrypt = require('../utilities/encryption')
-    , auth    = require('./authenticate')
-    , db      = require('../main/postgresql')
-    , q       = require('q');
+  var User    = require('../models/User');
+  var encrypt = require('../utilities/encryption');
+  var auth    = require('./authenticate');
+  var db      = require('../main/postgresql');
+  var q       = require('q');
 
   var queryUser = function (username) {
     var deferred = new q.defer();
@@ -30,13 +30,14 @@
 
   var handlePasswordUpdate = function (userUpdates, user) {
     var deferred = new q.defer();
-    if (userUpdates.password && userUpdates.password.length > 0) { //if has 'new' password.
+    if (userUpdates.password && userUpdates.password.length > 0) {
+      //if has 'new' password.
       encrypt.createSalt()
         .then(function saltPromise(salt) {
           user.salt = salt;
           encrypt.hashPwd(userUpdates.password, salt)
             .then(function hashPromise(hash) {
-              user.hashed_pwd = hash;
+              user.hashedPassword = hash;
               user.updatePassword()
                 .then(function dbResult(promise) {
                   if (promise === true) {
@@ -44,7 +45,7 @@
                     console.log('whee');
                   }
                   else {
-                    deferred.reject(new Error('Failed password update'), user)
+                    deferred.reject(new Error('Failed password update'), user);
                     console.log('jura');
                   }
                 });
@@ -60,8 +61,8 @@
 
   var updateUserQuery = function (userUpdates, user) {
     var deferred = new q.defer();
-    if (user.usr_display !== userUpdates.display) {
-      user.usr_display = userUpdates.display;
+    if (user.displayName !== userUpdates.display) {
+      user.displayName = userUpdates.display;
       user.updateDisplay()
         .then(function () {
           var token = auth.getToken(user);
@@ -70,7 +71,7 @@
           deferred.reject(new Error(err.toString()));
         }).done();
     } else {
-      deferred.resolve(user)
+      deferred.resolve(user);
     }
     return deferred.promise;
   };

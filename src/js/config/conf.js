@@ -1,10 +1,10 @@
 (function () {
   'use strict';
 
-  var path     = require('path')
-    , fs       = require('fs')
-    , rootPath = path.normalize(__dirname + '/../')
-    , env      = process.env.NODE_ENV || 'development';
+  var path     = require('path');
+  var fs       = require('fs');
+  var rootPath = path.normalize(__dirname + '/../');
+  var env      = process.env.NODE_ENV || 'development';
 
   var config = {
     development: {
@@ -18,7 +18,7 @@
       pgConnString: 'postgres://geegomoonshine:ToomasOnHeaDm123@localhost:5432/lindoriadb',
       tokenSecret : fs.readFileSync(rootPath + 'ssl/pub_lind_token.pem'),
       tokenOptions: {
-        algorithm       : 'HS256',
+        algorithm: 'HS256',
         expiresIn: 3600
       }
     },
@@ -31,7 +31,7 @@
       pgConnString: 'postgres://geegomoonshine:ToomasOnHeaDm123@db:5432/lindoriadb',
       tokenSecret : fs.readFileSync(rootPath + 'ssl/pub_lind_token.pem'),
       tokenOptions: {
-        algorithm       : 'HS256',
+        algorithm: 'HS256',
         expiresIn: 3600
       }
     }

@@ -1,8 +1,8 @@
 //app/models/Holding.js
 (function () {
   'use strict';
-  var mongoose = require('mongoose')
-    , Schema = mongoose.Schema;
+  var mongoose = require('mongoose');
+  var Schema   = mongoose.Schema;
 
   var holdingSchema = mongoose.Schema({
     type    : String,

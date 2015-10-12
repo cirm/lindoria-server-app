@@ -2,12 +2,12 @@
 
   'use strict';
 
-  var q          = require('q')
-    , pg         = require('pg')
-    , config     = require('../config/conf');
+  var q      = require('q');
+  var pg     = require('pg');
+  var config = require('../config/conf');
 
   exports.query = function (queryString) {
-    var results = [];
+    var results  = [];
     var deferred = new q.defer();
 
     pg.connect(config.pgConnString, function (err, client, done) {
@@ -31,15 +31,15 @@
 
   };
 
-  exports.insert= function(queryString, data) {
-    var results = [];
+  exports.insert = function (queryString, data) {
+    var results  = [];
     var deferred = new q.defer();
 
     pg.connect(config.pgConnString, function (err, client, done) {
 
       // SQL Query > Select Data
       var query = client.query(queryString,
-      data);
+        data);
 
       // Stream results back one row at a time
       query.on('row', function (row) {

@@ -2,8 +2,8 @@
 (function () {
   'use strict';
 
-  var bcrypt = require('bcrypt')
-    , q      = require('q');
+  var bcrypt = require('bcrypt');
+  var q = require('q');
 
 
   exports.hashPwd = function (password, salt) {

@@ -1,8 +1,8 @@
 //app/controllers/holdings.js
 (function () {
   'use strict';
-  var Holding = require('mongoose').model('Holding')
-    , handleErr = require('../utilities/logging');
+  var Holding   = require('mongoose').model('Holding');
+  var handleErr = require('../utilities/logging');
 
 
   exports.getHoldingById = function (req, res) {

@@ -1,10 +1,10 @@
 (function () {
   'use strict';
 
-  var jwt    = require('jsonwebtoken')
-    , users  = require('../controllers/users')
-    , config = require('../config/conf')
-    , log    = require('../utilities/logging');
+  var jwt    = require('jsonwebtoken');
+  var users  = require('../controllers/users');
+  var config = require('../config/conf');
+  var log    = require('../utilities/logging');
 
 
   exports.requiresRole = function (role) {
@@ -20,7 +20,7 @@
   var generateToken = function (user) {
     var profile = {
       username: user.username,
-      display : user.usr_display,
+      display : user.displayName,
       roles   : user.roles
     };
     return jwt.sign(profile, config.tokenSecret, config.tokenOptions);

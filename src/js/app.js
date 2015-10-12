@@ -1,8 +1,8 @@
 (function () {
   'use strict';
 
-  var express = require('express')
-    , logger  = require('./utilities/winston');
+  var express = require('express');
+  var logger = require('./utilities/winston');
 
 
   var app = express();

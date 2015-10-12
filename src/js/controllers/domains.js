@@ -2,8 +2,8 @@
 (function () {
   'use strict';
 
-  var Domain = require('mongoose').model('Domain')
-    , handleErr = require('../utilities/logging');
+  var Domain    = require('mongoose').model('Domain');
+  var handleErr = require('../utilities/logging');
 
 
   exports.getDomains = function (req, res) {
@@ -23,7 +23,7 @@
   };
 
   exports.createDomain = function (req, res) {
-    var domainData = req.body;
+    var domainData  = req.body;
     domainData.name = domainData.name.toLowerCase();
     Domain.create(domainData, function (err, domain) {
       if (err) {
@@ -37,7 +37,7 @@
   };
 
   exports.updateDomain = function (req, res) {
-    var domainData = req.body;
+    var domainData  = req.body;
     domainData.name = domainData.name.toLowerCase();
 
     Domain.findOneAndUpdate({name: req.params.name}, domainData, {new: true}).exec(function (err, domain) {

@@ -1,8 +1,8 @@
 //app/models/Province.js
 (function () {
   'use strict';
-  var mongoose = require('mongoose')
-    , Schema = mongoose.Schema;
+  var mongoose = require('mongoose');
+  var Schema   = mongoose.Schema;
 
   var provinceSchema = mongoose.Schema({
     name   : {
@@ -86,6 +86,7 @@
       }
     });
   }
+
   exports.createDefaultProvinces = createDefaultProvinces;
 
 }());

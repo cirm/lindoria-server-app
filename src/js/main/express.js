@@ -2,10 +2,10 @@
 (function () {
   'use strict';
 
-  var morgan     = require('morgan')
-    , express    = require('express')
-    , bodyParser = require('body-parser')
-    , expressJwt = require('express-jwt');
+  var morgan     = require('morgan');
+  var express    = require('express');
+  var bodyParser = require('body-parser');
+  var expressJwt = require('express-jwt');
 
   module.exports = function (app, config, logger) {
 
@@ -24,7 +24,9 @@
     app.use(function (req, res, next) {
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
-      res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Authorization');
+      res.setHeader(
+        'Access-Control-Allow-Headers',
+        'X-Requested-With,content-type, Authorization');
       next();
     });
 
