@@ -22,25 +22,17 @@
   var queryFunction = function (string, values) {
     db.func(string, values)
       .then(function (data) {
-          return data[0];
-
-        },
-        function (reason) {
-          return new Error(reason.toString());
-        })
-      .done()
-  };
-
-  var query = function (string, values) {
-    db.query(string, values)
-      .then(function (data) {
-        console.log(data[0]); // print data;
         return data[0];
-      }, function (reason) {
+
+      },
+      function (reason) {
         return new Error(reason.toString());
       })
       .done();
+  };
 
+  var query = function (string, values) {
+    return db.query(string, values);
   };
 
   module.exports = {

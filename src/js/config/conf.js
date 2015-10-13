@@ -40,8 +40,8 @@
         expiresIn: 3600
       },
       db          : {
-        pgPass  : 'geegomoonshine',
-        pgUser  : 'ToomasOnHeaDm123',
+        pgUser  : 'geegomoonshine',
+        pgPass  : 'ToomasOnHeaDm123',
         port    : 5432,
         host    : 'db',
         database: 'lindoriadb'

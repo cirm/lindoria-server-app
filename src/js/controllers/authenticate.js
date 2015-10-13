@@ -5,9 +5,10 @@
   var users  = require('../controllers/users');
   var config = require('../config/conf');
   var log    = require('../utilities/logging');
+  var User   = require('../models/User');
 
 
-  exports.requiresRole = function (role) {
+  var checkHasRole = function (role) {
     return function (req, res, next) {
       if (!req.Authorization || req.Authorization.roles.indexOf(role) === -1) {
         res.status(403).end();
@@ -26,35 +27,36 @@
     return jwt.sign(profile, config.tokenSecret, config.tokenOptions);
   };
 
-  var getUserData = function (reqUser) {
-    return users.queryUser(reqUser);
+  var doAuthenticateFlow = function (req, res) {
+    var user = {};
+    users.queryUser(req.body.username).then(function populateUser(data) {
+      if (!data[0]) {
+        throw new Error('User not found');
+      } else {
+        user = new User(data[0].row_to_json, {
+          db: require('../postgres/clientPool')
+        });
+      }
+    }).then(function doPasswordCheck() {
+      return user.authenticate(req.body.password);
+    }).then(function authResult(result) {
+      if (result !== true) {
+        throw new Error('Authentication failed');
+      } else {
+        user.logVisit();
+        var token = generateToken(user);
+        res.json({token: token});
+      }
+    }).catch(function handleError(err) {
+      log.logErr(err);
+      res.status(401).send('Invalid password or username');
+    }).done();
   };
 
-  exports.authUser = function (req, res) {
-    var user = getUserData(req.body.username);
-    user.authenticate(req.body.password)
-    //getUserData(req.body.username)
-    //  .then(function handleUserPromise(user) {
-    //    user.authenticate(req.body.password)
-          .then(function handleAuthPromise(authResult) {
-            if (authResult !== true) {
-              res.status(401).send('Invalid password or username');
-            } else {
-              user.logVisit();
-              var token = generateToken(user);
-              res.json({token: token});
-            }
-          });
-    //  })
-    //  .catch(function (err) {
-    //    log.logErr(err);
-    //    res.status(401).send('Invalid password or username');
-    //  })
-    //  .done();
-  };
-
-  exports.getToken = function (data) {
-    return generateToken(data);
+  module.exports = {
+    authUser    : doAuthenticateFlow,
+    requiresRole: checkHasRole,
+    getToken    : generateToken
   };
 
 }());
