@@ -33,7 +33,6 @@
     var qs    = 'SELECT web.log_visit($1);';
     var qData = [this.username];
     this.db.query(qs, qData)
-
   };
 
   userModel.prototype.updatePassword = function () {

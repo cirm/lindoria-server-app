@@ -13,13 +13,18 @@
       port        : 8080,
       logFormat   : 'dev',
       conString   : 'mongodb://localhost:27017/lindoria',
-      pgPass      : 'ToomasOnHeaDm123',
-      pgUser      : 'geego.moonshine',
       pgConnString: 'postgres://geegomoonshine:ToomasOnHeaDm123@localhost:5432/lindoriadb',
       tokenSecret : fs.readFileSync(rootPath + 'ssl/pub_lind_token.pem'),
       tokenOptions: {
         algorithm: 'HS256',
         expiresIn: 3600
+      },
+      db          : {
+        pgUser  : 'geegomoonshine',
+        pgPass  : 'ToomasOnHeaDm123',
+        port    : 5432,
+        host    : 'localhost',
+        database: 'lindoriadb'
       }
     },
     staging    : {
@@ -33,6 +38,13 @@
       tokenOptions: {
         algorithm: 'HS256',
         expiresIn: 3600
+      },
+      db          : {
+        pgPass  : 'geegomoonshine',
+        pgUser  : 'ToomasOnHeaDm123',
+        port    : 5432,
+        host    : 'db',
+        database: 'lindoriadb'
       }
     }
 

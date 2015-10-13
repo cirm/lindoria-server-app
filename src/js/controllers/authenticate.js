@@ -31,9 +31,11 @@
   };
 
   exports.authUser = function (req, res) {
-    getUserData(req.body.username)
-      .then(function handleUserPromise(user) {
-        user.authenticate(req.body.password)
+    var user = getUserData(req.body.username);
+    user.authenticate(req.body.password)
+    //getUserData(req.body.username)
+    //  .then(function handleUserPromise(user) {
+    //    user.authenticate(req.body.password)
           .then(function handleAuthPromise(authResult) {
             if (authResult !== true) {
               res.status(401).send('Invalid password or username');
@@ -43,12 +45,12 @@
               res.json({token: token});
             }
           });
-      })
-      .catch(function (err) {
-        log.logErr(err);
-        res.status(401).send('Invalid password or username');
-      })
-      .done();
+    //  })
+    //  .catch(function (err) {
+    //    log.logErr(err);
+    //    res.status(401).send('Invalid password or username');
+    //  })
+    //  .done();
   };
 
   exports.getToken = function (data) {

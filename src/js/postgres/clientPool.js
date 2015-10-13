@@ -1,54 +1,51 @@
 (function () {
   'use strict';
 
-  var Promise = require('bluebird');
-  var pg      = Promise.promisifyAll(require('pg'));
+  var promise = require('bluebird');
+  var monitor = require('pg-monitor');
+  var options = {promiseLib: promise};
+  var pgp     = require('pg-promise')(options);
   var config  = require('../config/conf');
 
-  var rollback = function (client, done) {
-    client.query('ROLLBACK', function (err) {
-      //if there was a problem rolling back the query
-      //something is seriously messed up.  Return the error
-      //to the done function to close & remove this client from
-      //the pool.  If you leave a client in the pool with an unaborted
-      //transaction weird, hard to diagnose problems might happen.
-      return done(err);
-    });
+  monitor.attach(options); //attach to all events at once;
+
+  var cn = {
+    host    : config.db.host,
+    port    : config.db.port,
+    database: config.db.database,
+    user    : config.db.pgUser,
+    password: config.db.pgPass
   };
 
-  var query = function (text, data) {
-    return pg.connect(config.pgConnString, function (err, client, done) {
-      if (err) {
-        throw err;
-      }
-      client.query('BEGIN', function (err) {
-        if (err) {
-          return rollback(client, done);
-        }
-        //as long as we do not call the `done` callback we can do
-        //whatever we want...the client is ours until we call `done`
-        //on the flip side, if you do call `done` before either COMMIT or
-        // ROLLBACK what you are doing is returning a client back to the pool
-        // while it is in the middle of a transaction.
-        //Returning a client while its in the middle of a transaction
-        //will lead to weird & hard to diagnose errors.
-        process.nextTick(function () {
-          client.query(text, data, function (err) {
-            if (err) {
-              return rollback(client, done);
-            }
-            client.query('COMMIT', done);
+  var db = pgp(cn);
 
-          });
-        });
-      });
-    });
+  var queryFunction = function (string, values) {
+    db.func(string, values)
+      .then(function (data) {
+          return data[0];
+
+        },
+        function (reason) {
+          return new Error(reason.toString());
+        })
+      .done()
   };
 
+  var query = function (string, values) {
+    db.query(string, values)
+      .then(function (data) {
+        console.log(data[0]); // print data;
+        return data[0];
+      }, function (reason) {
+        return new Error(reason.toString());
+      })
+      .done();
+
+  };
 
   module.exports = {
-    query: query
-
+    queryFunction: queryFunction,
+    query        : query
   };
 
 })();
