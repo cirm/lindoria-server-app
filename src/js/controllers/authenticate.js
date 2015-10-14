@@ -5,10 +5,7 @@
   var users   = require('../controllers/users');
   var config  = require('../config/conf');
   var log     = require('../utilities/logging');
-  var User    = require('../models/User');
-  var db      = require('../postgres/clientPool');
   var error   = require('../utilities/errors');
-  var options = {db: db};
   var profile;
   var token;
   var user;
@@ -34,13 +31,8 @@
   };
 
   var doAuthenticateFlow = function (req, res) {
-    users.queryUser(req.body.username).then(function populateUser(response) {
-      if (!response[0]) {
-        error.userNotFound();
-      } else {
-        user = new User(response[0].row_to_json, options);
-      }
-    }).then(function doPasswordCheck() {
+    users.queryUser(req.body.username).then(function doPasswordCheck(userObject) {
+      user = userObject;
       return user.authenticate(req.body.password);
     }).then(function authResult(result) {
       if (result !== true) {

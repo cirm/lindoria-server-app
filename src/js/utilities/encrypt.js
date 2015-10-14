@@ -14,8 +14,8 @@
     return bcrypt.genSaltAsync(12);
   };
 
-  var compareHash = function (password, hash) {
-    return bcrypt.compareAsync(password, hash);
+  var compareHash = function (password, hashedPassword) {
+    return bcrypt.compareAsync(password, hashedPassword);
   };
 
   module.exports = {

@@ -3,11 +3,14 @@
   'use strict';
 
   var User       = require('../models/User');
-  var encrypt    = require('../utilities/encryption');
+  var encrypt    = require('../utilities/encrypt');
+  var errors     = require('../utilities/errors');
   var auth       = require('./authenticate');
   var q          = require('q');
   var Promise    = require('bluebird');
   var clientPool = require('../postgres/clientPool');
+  var options    = {db: clientPool};
+  var user;
 
 
   var queryUser = function (username) {
@@ -16,41 +19,53 @@
       'FROM web.users ' +
       'WHERE username = $1) t;';
     var qData = [username];
-    return clientPool.query(qs, qData);
+    return clientPool.query(qs, qData).then(function (response) {
+      if (!response[0]) {
+        errors.userNotFound();
+      }
+      return new User(response[0].row_to_json, options);
+    });
 
+  };
+
+  var updatePassword = function (userUpdates, user) {
+    return encrypt.createSalt().then(function (salt) {
+      return encrypt.hashPassword(userUpdates.password, salt)
+    }).then(function (passwordHash) {
+      user.hashedPassword = passwordHash;
+      return user.updatePassword().then(function (data) {
+        return data;
+      })
+    })
   };
 
   var handlePasswordUpdate = function (userUpdates, user) {
-    var deferred = new q.defer();
     if (userUpdates.password && userUpdates.password.length > 0) {
-      //if has 'new' password.
-      encrypt.createSalt()
-        .then(function saltPromise(salt) {
-          user.salt = salt;
-          encrypt.hashPwd(userUpdates.password, salt)
-            .then(function hashPromise(hash) {
-              user.hashedPassword = hash;
-              user.updatePassword()
-                .then(function dbResult(promise) {
-                  if (promise === true) {
-                    deferred.resolve(user);
-                  }
-                  else {
-                    deferred.reject(new Error('Failed password update'), user);
-
-                  }
-                });
-
-            });
-        });
+      user.authenticate(userUpdates.password).then(function (result) {
+        if (result !== false) {
+          console.log('x');
+          return false;
+        } else {
+          console.log('z');
+          return updatePassword(userUpdates, user);
+        }
+      });
+    } else {
+      console.log('b');
+      return false;
     }
-    else {
-      deferred.resolve(user);
-    }
-    return deferred.promise;
   };
-
-  var updateUserQuery = function (userUpdates, user) {
+  var handleDisplayUpdate  = function (userUpdates, user) {
+    if (user.displayName !== userUpdates.display) {
+      user.displayName = userUpdates.display;
+      return user.updateDisplay().then(function () {
+        return user;
+      });
+    } else {
+      return false;
+    }
+  };
+  var updateUserQuery      = function (userUpdates, user) {
     var deferred = new q.defer();
     if (user.displayName !== userUpdates.display) {
       user.displayName = userUpdates.display;
@@ -59,12 +74,18 @@
           var token = auth.getToken(user);
           deferred.resolve(token);
         }).catch(function (err) {
-          deferred.reject(new Error(err.toString()));
-        }).done();
+        deferred.reject(new Error(err.toString()));
+      }).done();
     } else {
       deferred.resolve(user);
     }
     return deferred.promise;
+  };
+
+  var renewToken = function (user) {
+    auth.getToken(user).then(function (token) {
+      return token
+    })
   };
 
   var updateUser = function (req, res) {
@@ -75,18 +96,20 @@
     }
     queryUser(req.Authorization.username)
       .then(function (user) {
-        handlePasswordUpdate(userUpdates, user)
-          .then(function pwdUpdatePromise(user) {
-            updateUserQuery(userUpdates, user)
-              .then(function tokenPromise(token) {
-                res.json({token: token});
-              });
-          });
-      })
-      .
-      catch(function (err) {
-        console.log(err.toString());
-      }).done();
+        return Promise.all([handlePasswordUpdate(userUpdates, user), handleDisplayUpdate(userUpdates, user)]);
+      }).then(function (results) {
+      console.log(results);
+      if (results.indexOf(true) > -1) {
+        renewToken(user).then(function (token) {
+          res.json({token: token})
+        })
+      } else {
+        res.status(200).end();
+      }
+    }).catch(function (err) {
+      console.log(err.toString());
+      res.status(403).end();
+    }).done();
   };
 
   var queryUsers = function (req, res) {
@@ -95,8 +118,8 @@
       .then(function dbResultPromise(collection) {
         res.send(collection);
       }).catch(function (err) {
-        console.log(err.toString());
-      }).done();
+      console.log(err.toString());
+    }).done();
   };
 
 
