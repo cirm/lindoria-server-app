@@ -6,10 +6,12 @@
   var options = {promiseLib: promise};
   var pgp     = require('pg-promise')(options);
   var config  = require('../config/conf');
+  var cn;
+  var db;
 
   monitor.attach(options); //attach to all events at once;
 
-  var cn = {
+  cn = {
     host    : config.db.host,
     port    : config.db.port,
     database: config.db.database,
@@ -17,18 +19,10 @@
     password: config.db.pgPass
   };
 
-  var db = pgp(cn);
+  db = pgp(cn);
 
   var queryFunction = function (string, values) {
-    db.func(string, values)
-      .then(function (data) {
-        return data[0];
-
-      },
-      function (reason) {
-        return new Error(reason.toString());
-      })
-      .done();
+  return  db.func(string, values)
   };
 
   var query = function (string, values) {

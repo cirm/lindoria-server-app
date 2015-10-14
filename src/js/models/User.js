@@ -30,7 +30,7 @@
   userModel.prototype.logVisit = function () {
     var qs    = 'web.log_visit';
     var qData = [this.username];
-    this.db.queryFunction(qs, qData);
+    return this.db.queryFunction(qs, qData);
   };
 
   userModel.prototype.updatePassword = function () {

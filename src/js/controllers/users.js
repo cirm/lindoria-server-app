@@ -5,7 +5,6 @@
   var User       = require('../models/User');
   var encrypt    = require('../utilities/encryption');
   var auth       = require('./authenticate');
-  var db         = require('../main/postgresql');
   var q          = require('q');
   var Promise    = require('bluebird');
   var clientPool = require('../postgres/clientPool');
@@ -68,40 +67,43 @@
     return deferred.promise;
   };
 
-  module.exports = {
-    updateUser: function (req, res) {
-      var userUpdates = req.body;
-      if (req.Authorization.username !== userUpdates.username && !req.Authorization.hasRole('admin')) {
-        //if (true) {then do.}
-        return res.status(403).end();
-      }
-      queryUser(req.Authorization.username)
-        .then(function (user) {
-          handlePasswordUpdate(userUpdates, user)
-            .then(function pwdUpdatePromise(user) {
-              updateUserQuery(userUpdates, user)
-                .then(function tokenPromise(token) {
-                  res.json({token: token});
-                });
-            });
-        })
-        .
-        catch(function (err) {
-          console.log(err.toString());
-        }).done();
-    },
-
-    getUsers : function (req, res) {
-      var qs = 'SELECT username, usr_display, roles, visited_at from web.users';
-      db.query(qs)
-        .then(function dbResultPromise(collection) {
-          res.send(collection);
-        }
-      );
-    },
-    queryUser: function (username) {
-      return queryUser(username);
+  var updateUser = function (req, res) {
+    var userUpdates = req.body;
+    if (req.Authorization.username !== userUpdates.username && !req.Authorization.hasRole('admin')) {
+      //if (true) {then do.}
+      return res.status(403).end();
     }
+    queryUser(req.Authorization.username)
+      .then(function (user) {
+        handlePasswordUpdate(userUpdates, user)
+          .then(function pwdUpdatePromise(user) {
+            updateUserQuery(userUpdates, user)
+              .then(function tokenPromise(token) {
+                res.json({token: token});
+              });
+          });
+      })
+      .
+      catch(function (err) {
+        console.log(err.toString());
+      }).done();
+  };
+
+  var queryUsers = function (req, res) {
+    var qs = 'SELECT username, usr_display, roles, visited_at from web.users';
+    clientPool.query(qs, [])
+      .then(function dbResultPromise(collection) {
+        res.send(collection);
+      }).catch(function (err) {
+        console.log(err.toString());
+      }).done();
+  };
+
+
+  module.exports = {
+    updateUser: updateUser,
+    getUsers  : queryUsers,
+    queryUser : queryUser
   };
 
 
