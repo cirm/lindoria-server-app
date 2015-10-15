@@ -2,7 +2,7 @@
   'use strict';
 
   var express = require('express');
-  var logger = require('./utilities/winston');
+  var logger  = require('./utilities/winston');
 
 
   var app = express();
@@ -11,7 +11,7 @@
   logger.debug('Loading config for ' + config.envString + ' env.');
 
   //require('./app/main/mongoose')(config, logger);
-  require('./main/provisionDb')();
+  require('./postgres/provisionUsers');
   require('./main/express')(app, config, logger);
   require('./routes/authRoutes')(app);
   require('./routes/indexRoutes')(app);
