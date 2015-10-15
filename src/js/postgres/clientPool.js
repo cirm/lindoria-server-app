@@ -22,7 +22,7 @@
   db = pgp(cn);
 
   var queryFunction = function (string, values) {
-  return  db.func(string, values)
+  return  db.func(string, values);
   };
 
   var query = function (string, values) {

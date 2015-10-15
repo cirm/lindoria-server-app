@@ -1,13 +1,11 @@
 (function () {
   'use strict';
 
-  var jwt     = require('jsonwebtoken');
-  var users   = require('../controllers/users');
-  var config  = require('../config/conf');
-  var log     = require('../utilities/logging');
-  var error   = require('../utilities/errors');
-  var profile;
-  var token;
+  var jwt    = require('../utilities/token');
+  var users  = require('../controllers/users');
+  var config = require('../config/conf');
+  var log    = require('../utilities/logging');
+  var error  = require('../utilities/errors');
   var user;
 
 
@@ -21,14 +19,6 @@
     };
   };
 
-  var generateToken = function (user) {
-    profile = {
-      username: user.username,
-      display : user.displayName,
-      roles   : user.roles
-    };
-    return jwt.sign(profile, config.tokenSecret, config.tokenOptions);
-  };
 
   var doAuthenticateFlow = function (req, res) {
     users.queryUser(req.body.username).then(function doPasswordCheck(userObject) {
@@ -39,9 +29,10 @@
         error.authenticationFailed();
       } else {
         user.logVisit();
-        token = generateToken(user);
-        res.json({token: token});
+        return jwt.getToken(user);
       }
+    }).then(function (token) {
+      res.json({token: token});
     }).catch(function handleError(err) {
       log.logErr(err);
       res.status(401).send('Invalid password or username');
@@ -50,8 +41,7 @@
 
   module.exports = {
     authUser    : doAuthenticateFlow,
-    requiresRole: checkHasRole,
-    getToken    : generateToken
+    requiresRole: checkHasRole
   };
 
 }());
