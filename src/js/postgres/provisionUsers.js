@@ -3,7 +3,7 @@
 
   var clientPool   = require('./clientPool');
   var log          = require('../utilities/winston');
-  var encrypt      = require('../utilities/encryption');
+  var encrypt      = require('../utilities/encrypt');
   var defaultUsers = require('../config/defaultUsers');
 
   var checkUsers = function () {
@@ -16,30 +16,30 @@
   var insertUser = function (userObject) {
     var uo = userObject;
     encrypt.createSalt().then(function (salt) {
-      return encrypt.hashPwd(uo.password, salt);
+      uo.salt = salt;
+      return encrypt.hashPassword(uo.password, salt);
     }).then(function (hashedPassword) {
       var qData = [
         uo.displayName,
         uo.username,
-        salt,
+        uo.salt,
         hashedPassword,
         uo.roles
       ];
-      return clientPool.function('web.create_user', qData);
+      return clientPool.queryFunction('web.create_user', qData);
     }).then(function (queryResult) {
       var user = queryResult[0].create_user;
       log.debug(
         'Inserted username: ' + user.username +
-        ' with display name: ' + user.displayName
+        ' with display name: ' + user.usr_display
       );
     });
   };
 
   var insertUsers = function (userList) {
     var len = userList.length;
-    console.log(len);
     for (var i = 0; i < len; i++) {
-      insertUser(userlist[i]);
+      insertUser(userList[i]);
     }
   };
 
