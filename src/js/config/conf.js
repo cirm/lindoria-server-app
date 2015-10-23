@@ -18,11 +18,12 @@
         expiresIn: 3600
       },
       db          : {
-        pgUser  : 'geegomoonshine',
-        pgPass  : 'ToomasOnHeaDm123',
-        port    : 5432,
-        host    : 'localhost',
-        database: 'lindoriadb'
+        pgUser   : 'geegomoonshine',
+        pgPass   : 'ToomasOnHeaDm123',
+        port     : 5432,
+        host     : 'localhost',
+        database : 'lindoriadb',
+        dbVersion: 2
       }
     },
     staging    : {
@@ -36,11 +37,12 @@
         expiresIn: 3600
       },
       db          : {
-        pgUser  : 'geegomoonshine',
-        pgPass  : 'ToomasOnHeaDm123',
-        port    : 5432,
-        host    : 'db',
-        database: 'lindoriadb'
+        pgUser   : 'geegomoonshine',
+        pgPass   : 'ToomasOnHeaDm123',
+        port     : 5432,
+        host     : 'db',
+        database : 'lindoriadb',
+        dbVersion: 2
       }
     }
 

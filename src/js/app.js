@@ -11,6 +11,7 @@
   logger.debug('Loading config for ' + config.envString + ' env.');
 
   //require('./app/main/mongoose')(config, logger);
+  require('./postgres/provision');
   require('./postgres/provisionUsers');
   require('./main/express')(app, config, logger);
   require('./routes/authRoutes')(app);
