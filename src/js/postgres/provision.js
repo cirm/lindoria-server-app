@@ -20,9 +20,9 @@
     return clientPool.query(qs, [])
   };
 
-  var updateDb = function(content, comment) {
+  var updateDb = function(content, version, comment) {
     clientPool.query(content, [])
-      .then(clientPool.queryFunction('dbv.log_update' ,comment))
+      .then(clientPool.queryFunction('dbv.log_update' ,[version, comment]))
   };
 
   var getFilesForUpdate = function () {
@@ -34,7 +34,7 @@
         console.log(comment);
         fs.readFileAsync('./build/postgres/provision/' + filename, "utf8")
           .then(function(content) {
-            updateDb(content, comment);
+            updateDb(content, scriptVersion, comment);
           });
       } else {
         console.log('troll');
