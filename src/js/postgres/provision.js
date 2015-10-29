@@ -1,13 +1,13 @@
 (function () {
   'use strict';
 
-  var clientPool = require('./clientPool');
-  var log        = require('../utilities/logging');
-  var Promise = require('bluebird');
-  var fs = Promise.promisifyAll(require('fs'));
+  var clientPool     = require('./clientPool');
+  var log            = require('../utilities/logging');
+  var Promise        = require('bluebird');
+  var fs             = Promise.promisifyAll(require('fs'));
   var dbVersion;
   var qs;
-  var conf = require('../config/conf');
+  var conf           = require('../config/conf');
   var releaseVersion = conf.db.dbVersion;
 
 
@@ -20,20 +20,21 @@
     return clientPool.query(qs, [])
   };
 
-  var updateDb = function(content, version, comment) {
+  var updateDb = function (content, version, comment) {
     clientPool.query(content, [])
-      .then(clientPool.queryFunction('dbv.log_update' ,[version, comment]))
+      .then(clientPool.queryFunction('dbv.log_update', [version, comment]))
   };
 
   var getFilesForUpdate = function () {
     console.log('asdf');
     fs.readdirAsync('./build/postgres/provision/').map(function (filename) {
-      var scriptVersion = parseInt(filename.match(/\d+\./));
-      if (scriptVersion > dbVersion && scriptVersion <= releaseVersion ) {
+      var scriptVersion;
+      scriptVersion = parseInt(filename.match(/\d+\./));
+      if (scriptVersion > dbVersion && scriptVersion <= releaseVersion) {
         var comment = /.{3}\.(\w+)\.sql/.exec(filename)[1];
         console.log(comment);
         fs.readFileAsync('./build/postgres/provision/' + filename, "utf8")
-          .then(function(content) {
+          .then(function (content) {
             updateDb(content, scriptVersion, comment);
           });
       } else {
@@ -51,13 +52,20 @@
     }
   };
 
+  var decideIfProvisionNeeded = function () {
+    require('./provisionUsers');
+  };
+
   var provisionDb = function () {
     checkDbReleaseVersion()
-      .then(function(data){
+      .then(function (data) {
         dbVersion = data[0].version;
         decideIfUpdateNeeded()
       })
-      .catch(function(ex) {
+      .then(function () {
+        decideIfProvisionNeeded()
+      })
+      .catch(function (ex) {
         log.logErr(ex)
       })
   };
