@@ -1,13 +1,15 @@
 (function () {
   'use strict';
 
-  var clientPool     = require('./clientPool');
-  var log            = require('../utilities/logging');
-  var Promise        = require('bluebird');
-  var fs             = Promise.promisifyAll(require('fs'));
-  var dbVersion;
+  var clientPool = require('./clientPool');
+  var log = require('../utilities/logging');
+  var Promise = require('bluebird');
+  var fs = Promise.promisifyAll(require('fs'));
   var qs;
-  var conf           = require('../config/conf');
+  var comment;
+  var dbVersion;
+  var scriptVersion;
+  var conf = require('../config/conf');
   var releaseVersion = conf.db.dbVersion;
 
 
@@ -15,40 +17,43 @@
     qs = '' +
       'SELECT scl.version ' +
       'FROM dbv.schemaChangeLog scl ' +
-      'ORDER BY version ' +
+      'ORDER BY version DESC ' +
       'LIMIT 1;';
-    return clientPool.query(qs, [])
+    return clientPool.query(qs, []);
   };
 
-  var updateDb = function (content, version, comment) {
-    clientPool.query(content, [])
-      .then(clientPool.queryFunction('dbv.log_update', [version, comment]))
+  var updateDb = function (content) {
+    return clientPool.query(content, []);
+  };
+
+  var dbFunction = function (fname, scriptVersion, comment) {
+    return clientPool.queryFunction(fname, [scriptVersion, comment]);
   };
 
   var getFilesForUpdate = function () {
-    console.log('asdf');
-    fs.readdirAsync('./build/postgres/provision/').map(function (filename) {
-      var scriptVersion;
-      scriptVersion = parseInt(filename.match(/\d+\./));
-      if (scriptVersion > dbVersion && scriptVersion <= releaseVersion) {
-        var comment = /.{3}\.(\w+)\.sql/.exec(filename)[1];
-        console.log(comment);
-        fs.readFileAsync('./build/postgres/provision/' + filename, "utf8")
-          .then(function (content) {
-            updateDb(content, scriptVersion, comment);
-          });
-      } else {
-        console.log('troll');
-      }
-    })
+    return fs.readdirAsync('./build/postgres/provision/')
+      .map(function (filename) {
+        scriptVersion = parseInt(filename.match(/\d+\./));
+        if (scriptVersion > dbVersion && scriptVersion <= releaseVersion) {
+          comment = /.{3}\.(\w+)\.sql/.exec(file)[1];
+          return fs.readFileAsync('./build/postgres/provision/' + file, 'utf8')
+            .then(function (content) {
+              return updateDb(content);
+            })
+            .then(function () {
+              return dbFunction('dbv.log_update', scriptVersion, comment);
+            });
+        }
+      });
   };
 
   var decideIfUpdateNeeded = function () {
     if (releaseVersion > dbVersion) {
       log.debug('Update Needed');
-      getFilesForUpdate()
+      return true;
     } else {
       log.debug('Db up-to date. Skipping provisioning');
+      return false;
     }
   };
 
@@ -60,14 +65,19 @@
     checkDbReleaseVersion()
       .then(function (data) {
         dbVersion = data[0].version;
-        decideIfUpdateNeeded()
+        return decideIfUpdateNeeded();
+      })
+      .then(function (state) {
+        if (state) {
+          return getFilesForUpdate();
+        }
       })
       .then(function () {
-        decideIfProvisionNeeded()
+        decideIfProvisionNeeded();
       })
       .catch(function (ex) {
-        log.logErr(ex)
-      })
+        log.logErr(ex);
+      });
   };
 
   module.exports = provisionDb();
