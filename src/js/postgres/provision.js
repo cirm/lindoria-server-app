@@ -1,14 +1,15 @@
 (function () {
   'use strict';
 
-  var clientPool = require('./clientPool');
-  var log = require('../utilities/logging');
+  var clientPool  = require('./clientPool');
+  var log         = require('../utilities/logging');
   var dbProvision = require('.provisonDb');
+
   var qs;
   var dbVersion;
-  var conf = require('../config/conf');
-  var releaseVersion = conf.db.dbVersion;
 
+  var conf           = require('../config/conf');
+  var releaseVersion = conf.db.dbVersion;
 
   var checkDbReleaseVersion = function () {
     qs = '' +
@@ -41,7 +42,7 @@
       })
       .then(function (state) {
         if (state) {
-          return provisionDb.runDbProvision();
+          return dbProvision.runDbProvision();
         }
       })
       .then(function () {

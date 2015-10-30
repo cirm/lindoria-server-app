@@ -2,9 +2,8 @@
 (function () {
   'use strict';
   var clientPool = require('./clientPool');
-  var log = require('../utilities/logging');
-  var Promise = require('bluebird');
-  var fs = Promise.promisifyAll(require('fs'));
+  var Promise    = require('bluebird');
+  var fs         = Promise.promisifyAll(require('fs'));
 
   var scriptVersion;
   var comment;
