@@ -64,7 +64,8 @@
 
   var updateUser = function (req, res) {
     var userUpdates = req.body;
-    if (req.Authorization.username !== userUpdates.username && !req.Authorization.hasRole('admin')) {
+    if (req.Authorization.username !== userUpdates.username &&
+      !req.Authorization.hasRole('admin')) {
       //if (true) {then do.}
       return res.status(403).end();
     }
@@ -86,7 +87,7 @@
   };
 
   var queryUsers = function (req, res) {
-    var qs = 'SELECT username, usr_display, roles, visited_at from web.users';
+    var qs = 'SELECT username, display, roles, visited from web.users';
     clientPool.query(qs, [])
       .then(function dbResultPromise(collection) {
         res.send(collection);

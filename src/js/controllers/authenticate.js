@@ -21,10 +21,11 @@
 
 
   var doAuthenticateFlow = function (req, res) {
-    users.queryUser(req.body.username).then(function doPasswordCheck(userObject) {
-      user = userObject;
-      return user.authenticate(req.body.password);
-    }).then(function authResult(result) {
+    users.queryUser(req.body.username)
+      .then(function doPasswordCheck(userObject) {
+        user = userObject;
+        return user.authenticate(req.body.password);
+      }).then(function authResult(result) {
       if (result !== true) {
         error.authenticationFailed();
       } else {
@@ -40,7 +41,7 @@
   };
 
   module.exports = {
-    authUser    : doAuthenticateFlow,
+    authUser:     doAuthenticateFlow,
     requiresRole: checkHasRole
   };
 

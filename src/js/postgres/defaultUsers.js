@@ -6,10 +6,12 @@
   var encrypt      = require('../utilities/encrypt');
   var defaultUsers = require('../config/defaultUsers');
 
+  var qs;
+
   var checkUsers = function () {
-    var qs =
-          'SELECT * ' +
-          'FROM web.users;';
+    qs =
+      'SELECT * ' +
+      'FROM web.users;';
     return clientPool.query(qs, []);
   };
 
@@ -31,7 +33,7 @@
       var user = queryResult[0].create_user;
       log.debug(
         'Inserted username: ' + user.username +
-        ' with display name: ' + user.usr_display
+        ' with display name: ' + user.display
       );
     });
   };

@@ -13,9 +13,9 @@
     this.db = options.db;
 
     this.username       = data.username;
-    this.displayName    = data.usr_display;
+    this.displayName    = data.display;
     this.salt           = data.salt;
-    this.hashedPassword = data.hashed_pwd;
+    this.hashedPassword = data.hpassword;
     this.roles          = data.roles;
   };
 

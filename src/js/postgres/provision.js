@@ -3,13 +3,14 @@
 
   var clientPool  = require('./clientPool');
   var log         = require('../utilities/logging');
-  var dbProvision = require('.provisonDb');
+  var dbProvision = require('./dbScripts');
+
+  var conf           = require('../config/conf');
+  var releaseVersion = conf.db.dbVersion;
 
   var qs;
   var dbVersion;
 
-  var conf           = require('../config/conf');
-  var releaseVersion = conf.db.dbVersion;
 
   var checkDbReleaseVersion = function () {
     qs = '' +
@@ -31,7 +32,7 @@
   };
 
   var decideIfProvisionNeeded = function () {
-    require('./provisionUsers');
+    require('./defaultUsers');
   };
 
   var provisionDb = function () {
@@ -42,7 +43,7 @@
       })
       .then(function (state) {
         if (state) {
-          return dbProvision.runDbProvision();
+          return dbProvision.runDbProvision(dbVersion);
         }
       })
       .then(function () {
