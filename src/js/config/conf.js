@@ -8,46 +8,47 @@
 
   var config = {
     development: {
-      rootPath    : rootPath,
-      envString   : 'development',
-      port        : 8080,
-      logFormat   : 'dev',
-      tokenSecret : fs.readFileSync(rootPath + 'ssl/pub_lind_token.pem'),
+      rootPath:     rootPath,
+      envString:    'development',
+      port:         8080,
+      logFormat:    'dev',
+      tokenSecret:  fs.readFileSync(rootPath + 'ssl/pub_lind_token.pem'),
       tokenOptions: {
         algorithm: 'HS256',
         expiresIn: 3600
       },
-      db          : {
-        pgUser   : 'geegomoonshine',
-        pgPass   : 'ToomasOnHeaDm123',
-        port     : 5432,
-        host     : 'localhost',
-        database : 'lindoriadb',
+      db:           {
+        pgUser:    process.env.POSTGRES_USER,
+        pgPass:    process.env.POSTGRES_PASSWORD,
+        port:      process.env.POSTGRES_PORT,
+        host:      'localhost',
+        database:  process.env.POSTGRES_DB,
         dbVersion: 2
       }
     },
-    staging    : {
-      rootPath    : rootPath,
-      port        : 8080,
-      envString   : 'staging',
-      logFormat   : 'dev',
-      tokenSecret : fs.readFileSync(rootPath + 'ssl/pub_lind_token.pem'),
+    staging: {
+      rootPath:     rootPath,
+      port:         8080,
+      envString:    'staging',
+      logFormat:    'dev',
+      tokenSecret:  fs.readFileSync(rootPath + 'ssl/pub_lind_token.pem'),
       tokenOptions: {
         algorithm: 'HS256',
         expiresIn: 3600
       },
-      db          : {
-        pgUser   : 'geegomoonshine',
-        pgPass   : 'ToomasOnHeaDm123',
-        port     : 5432,
-        host     : 'db',
-        database : 'lindoriadb',
+      db:           {
+        pgUser:    process.env.POSTGRES_USER,
+        pgPass:    process.env.POSTGRES_PASSWORD,
+        port:      process.env.POSTGRES_PORT,
+        host:      'db',
+        database:  process.env.POSTGRES_DB,
         dbVersion: 2
       }
     }
-
-  };
+    };
 
   module.exports = config[env];
 
-}());
+}
+  ()
+  );
