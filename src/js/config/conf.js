@@ -26,7 +26,7 @@
         dbVersion: 2
       }
     },
-    staging: {
+    staging:     {
       rootPath:     rootPath,
       port:         8080,
       envString:    'staging',
@@ -45,10 +45,8 @@
         dbVersion: 2
       }
     }
-    };
+  };
 
   module.exports = config[env];
 
-}
-  ()
-  );
+}());
