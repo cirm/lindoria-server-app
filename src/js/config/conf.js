@@ -23,7 +23,7 @@
         port:      process.env.POSTGRES_PORT,
         host:      'localhost',
         database:  process.env.POSTGRES_DB,
-        dbVersion: 2
+        dbVersion: 5
       }
     },
     staging:     {
@@ -42,7 +42,7 @@
         port:      process.env.POSTGRES_PORT,
         host:      'db',
         database:  process.env.POSTGRES_DB,
-        dbVersion: 2
+        dbVersion: 5
       }
     }
   };

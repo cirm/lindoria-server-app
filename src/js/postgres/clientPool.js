@@ -7,7 +7,7 @@
   var pgp     = require('pg-promise')(options);
   var config  = require('../config/conf');
   var cn;
-  var db;
+  var   db;
 
   monitor.attach(options); //attach to all events at once;
 
@@ -27,6 +27,10 @@
 
   var query = function (string, values) {
     return db.query(string, values);
+  };
+
+  var transaction = function (string, values) {
+    return db.tx()
   };
 
   module.exports = {
