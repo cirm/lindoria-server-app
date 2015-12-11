@@ -7,55 +7,70 @@
 
   var conf           = require('../config/conf');
   var releaseVersion = conf.db.dbVersion;
+  var dbVersion;
 
+
+  var getFilesForUpdate = function (dbVer) {
+    dbVersion = dbVer;
+    return readDir()
+      .then(function (fileArr) {
+        return readFiles(fileArr);
+      })
+      .then(function (scriptBundleArr) {
+        return handleScriptsFromFiles(scriptBundleArr);
+      })
+      .catch(function (err) {
+        return logErr(err);
+      });
+  };
+
+   var readDir = function () {
+    return fs.readdirAsync('./postgres/provision/');
+  };
+
+  var readFiles = function (fileArr) {
+    return Promise.map(fileArr, function (file) {
+      return handleFile(file);
+    });
+  };
+
+  var handleFile = function (file) {
+    var scriptVersion = parseInt(file.match(/\d+\./));
+    if (scriptVersion > dbVersion && scriptVersion <= releaseVersion) {
+      var comment = /.{3}\.(\w+)\.sql/.exec(file)[1];
+      return fs.readFileAsync('./postgres/provision/' + file, 'utf8')
+        .then(function (script) {
+          return [script, scriptVersion, comment];
+        });
+    } else {
+      return false;
+    }
+  };
+
+  var handleScriptsFromFiles = function (scriptBundleArr) {
+    return Promise.each(scriptBundleArr, function (scriptArr) {
+      return handleScript(scriptArr);
+    });
+  };
+
+  var handleScript = function (scriptArr) {
+    if (scriptArr !== false) {
+      return updateDb(scriptArr);
+    } else {
+      return false;
+    }
+  };
 
   var updateDb = function (scriptArr) {
     return clientPool.query(scriptArr[0], [])
       .then(function () {
-        return dbFunction('dbv.log_update', scriptArr[1], scriptArr[2]);
+        return clientPool.queryFunction('dbv.log_update', [scriptArr[1], scriptArr[2]]);
       });
   };
 
-  var dbFunction = function (fname, scriptVersion, comment) {
-    return clientPool.queryFunction(fname, [scriptVersion, comment]);
-  };
-
-  var readDir = function () {
-    return fs.readdirAsync('./postgres/provision/');
-  };
-
-  var readFiles = function (fileArr, dbVersion) {
-    return Promise.map(fileArr, function (file) {
-      var scriptVersion = parseInt(file.match(/\d+\./));
-      if (scriptVersion > dbVersion && scriptVersion <= releaseVersion) {
-        var comment = /.{3}\.(\w+)\.sql/.exec(file)[1];
-        return fs.readFileAsync('./postgres/provision/' + file, 'utf8')
-          .then(function (script) {
-              return [script, scriptVersion, comment];
-            }
-          );
-      } else {
-        return false;
-      }
-    });
-  };
-
-  var getFilesForUpdate = function (dbVersion) {
-    return readDir()
-      .then(function (fileArr) {
-        return readFiles(fileArr, dbVersion);
-      })
-      .then(function (scriptArr) {
-        return Promise.each(scriptArr, function (sqlScript) {
-          if (sqlScript !== false) {
-            return updateDb(sqlScript);
-          }
-        });
-      })
-      .catch(function (err) {
-        console.log(err.toString());
-        return clientPool.query('ROLLBACK;', []);
-      });
+  var logErr = function (err) {
+    console.log(err.toString());
+    return clientPool.query('ROLLBACK', []);
   };
 
 
