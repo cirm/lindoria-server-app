@@ -30,7 +30,7 @@
   };
 
   var transaction = function (string, values) {
-    return db.tx()
+    return db.tx();
   };
 
   module.exports = {

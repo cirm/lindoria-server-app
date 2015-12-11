@@ -21,7 +21,7 @@
   };
 
   var readDir = function () {
-    return fs.readdirAsync('./postgres/provision/')
+    return fs.readdirAsync('./postgres/provision/');
   };
 
   var readFiles = function (fileArr, dbVersion) {
@@ -37,25 +37,25 @@
       } else {
         return false;
       }
-    })
+    });
   };
 
   var getFilesForUpdate = function (dbVersion) {
     return readDir()
       .then(function (fileArr) {
-        return readFiles(fileArr, dbVersion)
+        return readFiles(fileArr, dbVersion);
       })
       .then(function (scriptArr) {
         return Promise.each(scriptArr, function (sqlScript) {
           if (sqlScript !== false) {
-            return updateDb(sqlScript)
+            return updateDb(sqlScript);
           }
         });
       })
       .catch(function (err) {
         console.log(err.toString());
-        return clientPool.query('ROLLBACK;', [])
-      })
+        return clientPool.query('ROLLBACK;', []);
+      });
   };
 
 
