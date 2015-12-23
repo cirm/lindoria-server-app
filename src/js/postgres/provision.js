@@ -33,6 +33,7 @@
 
   var decideIfProvisionNeeded = function () {
     require('./defaultUsers');
+    require('./defaultData')
   };
 
   var provisionDb = function () {
