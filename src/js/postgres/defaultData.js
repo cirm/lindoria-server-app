@@ -2,6 +2,7 @@
   'use strict';
 
   var data = require('../config/defaultEmpires');
+  var Promise = require('bluebird');
   var persons = data.persons;
   var domains = data.domains;
   var provinces = data.provinces;
@@ -16,18 +17,17 @@
   };
 
   var insertData = function () {
-    var len = persons.length;
-    for (var i = 0; i < len; i++) {
-      insertPerson(persons[i]);
-    }
-    len = domains.length;
-    for (var z = 0; z < len; z++) {
-      insertDomain(domains[z]);
-    }
-    len = provinces.length;
-    for (var g = 0; g < len; g++) {
-      insertProvince(provinces[g]);
-    }
+    return Promise.map(persons, function (person) {
+      return insertPerson(person);
+    }).then(function() {
+      return Promise.map(domains, function (domain) {
+        return insertDomain(domain);
+      });
+    }).then(function() {
+      return Promise.map(provinces, function(province) {
+        return insertProvince(province);
+      });
+    });
   };
 
   var insertDomain = function (domain) {
@@ -38,6 +38,7 @@
       domain.abbr,
       domain.treasury
     ];
+    console.log(qdata);
     return clientPool.queryFunction('empires.create_domain', qdata);
   };
 

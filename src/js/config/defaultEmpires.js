@@ -4,7 +4,7 @@
   exports.persons = [
     {
       pname:   "mauza",
-      display: "Mauza"
+      display: "Mauza1"
     },
     {
       pname:   "tsunsun",
@@ -17,34 +17,34 @@
     regent:   "mauza",
     display:  "Lindoria Kuningriik",
     abbr:     "LK",
-    treasurt: 10
+    treasury: "10"
   }, {
       dname: "shalindar",
-      regent: "",
+      regent: "tsunsun",
       display: "Shalindari vennaskond",
       abbr: "SLV",
-      treasury: 0
+      treasury: "0"
     }];
 
   exports.provinces = [
     {
       pname: "vlindoria",
       display:"Vana-Lindoria",
-      level: 4,
+      level: "4",
       regent: "mauza",
-      loyalty: 3,
+      loyalty: "3",
       domain: "lindoria",
-      visible: true,
+      visible: "true",
       abbr: "VLD"
     },
     {
       pname: "plindoria",
       display: "Põhja-Lindoria",
-      level: 2,
+      level: "2",
       regent: "tsunsun",
-      loyalty: 2,
+      loyalty: "2",
       domain: "lindoria",
-      visible: true,
+      visible: "true",
       abbr: "PLD"
     }];
 
