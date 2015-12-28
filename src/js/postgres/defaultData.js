@@ -1,49 +1,76 @@
 (function () {
   'use strict';
 
-  var data = require('../config/defaultEmpires');
-  var Promise = require('bluebird');
-  var persons = data.persons;
-  var domains = data.domains;
-  var provinces = data.provinces;
-  var clientPool = require('./clientPool');
-  var log = require('../utilities/logging');
+  var Promise       = require('bluebird');
+  var persons       = require('../provision/empires/persons');
+  var domains       = require('../provision/empires/domains');
+  var provinces     = require('../provision/empires/provinces');
+  var organizations = require('../provision/empires/organizations');
+  var holdings      = require('../provision/empires/holdings');
+  var clientPool    = require('./clientPool');
+  var log           = require('../utilities/logging');
 
   var checkData = function () {
     var qs =
-      'SELECT * ' +
-      'FROM empires.provinces;';
+          'SELECT * ' +
+          'FROM empires.provinces;';
     return clientPool.query(qs, []);
   };
 
   var insertData = function () {
     return Promise.map(persons, function (person) {
       return insertPerson(person);
-    }).then(function() {
+    }).then(function () {
       return Promise.map(domains, function (domain) {
         return insertDomain(domain);
       });
-    }).then(function() {
-      return Promise.map(provinces, function(province) {
+    }).then(function () {
+      return Promise.map(provinces, function (province) {
         return insertProvince(province);
       });
-    });
+    }).then(function () {
+        return Promise.map(organizations, function (org) {
+          return insertOrg(org);
+        });
+      })
+      .then(function () {
+        return Promise.map(holdings, function (holding) {
+          return insertHolding(holding);
+        });
+      }).catch(function (err) {
+        log.logErr(err);
+      });
+  };
+
+  var insertOrg = function (org) {
+    return clientPool.queryFunction('empires.create_organization', [
+      org.oname,
+      org.display,
+      org.owner,
+      org.abbr,
+      org.treasury])
+  };
+
+  var insertHolding = function (holding) {
+    return clientPool.queryFunction('empires.create_holding', [
+      holding.level,
+      holding.owner,
+      holding.province,
+      holding.type])
   };
 
   var insertDomain = function (domain) {
-    var qdata = [
+    return clientPool.queryFunction('empires.create_domain', [
       domain.dname,
       domain.regent,
       domain.display,
       domain.abbr,
       domain.treasury
-    ];
-    console.log(qdata);
-    return clientPool.queryFunction('empires.create_domain', qdata);
+    ]);
   };
 
   var insertProvince = function (province) {
-    var qdata = [
+    return clientPool.queryFunction('empires.create_province', [
       province.pname,
       province.display,
       province.level,
@@ -52,16 +79,14 @@
       province.domain,
       province.visible,
       province.abbr
-    ];
-    return clientPool.queryFunction('empires.create_province', qdata);
+    ]);
   };
 
   var insertPerson = function (person) {
-    var qdata = [
+    return clientPool.queryFunction('empires.create_person', [
       person.pname,
       person.display
-    ];
-    return clientPool.queryFunction('empires.create_person', qdata);
+    ]);
   };
 
 
