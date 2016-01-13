@@ -50,6 +50,22 @@
       .then(function () {
         decideIfProvisionNeeded();
       })
+      .then(function () {
+        return clientPool.queryFunction('empires.get_organization_details', ['lpank'])
+          .then(function(data) {
+            console.log(data[0]);
+          })
+      }).then(function () {
+      return clientPool.queryFunction('empires.get_provinces', [])
+        .then(function(data) {
+          console.log(data);
+        })
+    }).then(function() {
+      return clientPool.queryFunction('empires.get_domain_details', ['lindoria'])
+        .then(function(data) {
+          console.log(data[0]);
+        })
+    })
       .catch(function (ex) {
         log.logErr(ex);
       });
