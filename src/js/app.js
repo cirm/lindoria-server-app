@@ -14,6 +14,7 @@
 
   require('./main/express')(app, config, logger);
   require('./routes/authRoutes')(app);
+  require('./routes/birthrightRoutes')(app);
   require('./routes/indexRoutes')(app);
 
   app.listen(config.port);

@@ -4,8 +4,8 @@
 
   //, relations = require('../controllers/relations')
   module.exports = function (app) {
-    require('./domainRoutes')(app);
+    //require('./domainRoutes')(app);
     require('./provinceRoutes')(app);
-    require('./holdingRoutes')(app);
+    //require('./holdingRoutes')(app);
   };
 }());
